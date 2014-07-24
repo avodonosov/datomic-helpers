@@ -1,4 +1,7 @@
 ;;;; -*- Mode: clojure; indent-tabs-mode: nil; coding: utf-8; show-trailing-whitespace: t -*-
+;;;;
+;;;; =========================================================================================
+;;;;
 ;;;; Demonstrates how to use DATOMIC-HELPERS to define schema and some data
 ;;;; for two well known Datomic sample databases:
 ;;;;
@@ -7,6 +10,8 @@
 ;;;;    <datomic-root>/samples/seattle/seattle-schema.edn  and seattle-data0.edn
 ;;;; 2. The MusicBrainz sample, see original schema at
 ;;;;    https://github.com/Datomic/mbrainz-sample/blob/master/schema.edn
+;;;;
+;;;; =========================================================================================
 
 (ns datomic-helpers-sample
   (:require [datomic.api :as d])
