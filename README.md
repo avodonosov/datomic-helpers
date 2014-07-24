@@ -21,3 +21,6 @@ The notation is meat to be intuitiely understandable,
 see [`examples`](datomic_helpers_sample.clj)
 
 The pricise rules are specified in the [`source code comments`](src/datomic_helpers.clj).
+
+I think the notation may be improved, but the current
+form is enough for me, and helps me significantly.
