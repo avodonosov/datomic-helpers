@@ -126,50 +126,50 @@
 
    ;; The label on which the recording was released.
    ;; An issue exists: https://github.com/Datomic/mbrainz-sample/pull/2
-   :release/label [ {
-                     ;; The globally unique MusicBrainz ID for the record label
-                     :label/gid (ext {:db/unique :db.unique/identity
-                                      :db/index true}
-                                     :db.type/uuid)
+   :release/label {
+                   ;; The globally unique MusicBrainz ID for the record label
+                   :label/gid (ext {:db/unique :db.unique/identity
+                                    :db/index true}
+                                   :db.type/uuid)
 
-                     ;; The name of the record label
-                     :label/name (ext {:db/fulltext true
-                                       :db/index true}
-                                      :db.type/string)
+                   ;; The name of the record label
+                   :label/name (ext {:db/fulltext true
+                                     :db/index true}
+                                    :db.type/string)
 
-                     ;; The name of the record label for use in alphabetical sorting
-                     :label/sortName (ext {:db/index true}
-                                          :db.type/string)
+                   ;; The name of the record label for use in alphabetical sorting
+                   :label/sortName (ext {:db/index true}
+                                        :db.type/string)
 
-                     :label/type #{:label.type/distributor
-                                   :label.type/holding
-                                   :label.type/production
-                                   :label.type/originalProduction
-                                   :label.type/bootlegProduction
-                                   :label.type/reissueProduction
-                                   :label.type/publisher}
+                   :label/type #{:label.type/distributor
+                                 :label.type/holding
+                                 :label.type/production
+                                 :label.type/originalProduction
+                                 :label.type/bootlegProduction
+                                 :label.type/reissueProduction
+                                 :label.type/publisher}
 
-                     ;; The country where the record label is located
-                     :label/country :db.type/ref ; country entity, see above
+                   ;; The country where the record label is located
+                   :label/country :db.type/ref ; country entity, see above
 
-                     ;; The year the label started business
-                     :label/startYear (ext {:db/index true}
-                                           :db.type/long)
+                   ;; The year the label started business
+                   :label/startYear (ext {:db/index true}
+                                         :db.type/long)
 
-                     ;; The month the label started business
-                     :label/startMonth :db.type/long
+                   ;; The month the label started business
+                   :label/startMonth :db.type/long
 
-                     ;; The day the label started business
-                     :label/startDay :db.type/long
+                   ;; The day the label started business
+                   :label/startDay :db.type/long
 
-                     ;; The year the label stopped business
-                     :label/endYear :db.type/long
+                   ;; The year the label stopped business
+                   :label/endYear :db.type/long
 
-                     ;; The month the label stopped business
-                     :label/endMonth :db.type/long
+                   ;; The month the label stopped business
+                   :label/endMonth :db.type/long
 
-                     ;; The day the label stopped business
-                     :label/endDay :db.type/long} ]
+                   ;; The day the label stopped business
+                   :label/endDay :db.type/long}
 
    ;; The script used in the release
    :release/script {:db/ident :db.type/keyword
