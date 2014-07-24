@@ -2,9 +2,10 @@
 ;;;; Demonstrates how to use DATOMIC-HELPERS to define schema and some data
 ;;;; for two well known Datomic sample databases:
 ;;;;
-;;;; 1. The seattle sample, distributed with Datomic. See original
-;;;;    schema and data in samples/seattle/seattle-schema.edn and seattle-data0.edn
-;;;; 2. Music Brains sample, see original schema at
+;;;; 1. The Seattle sample, distributed with Datomic. See original
+;;;;    schema and data in
+;;;;    <datomic-root>/samples/seattle/seattle-schema.edn  and seattle-data0.edn
+;;;; 2. The MusicBrainz sample, see original schema at
 ;;;;    https://github.com/Datomic/mbrainz-sample/blob/master/schema.edn
 
 (ns datomic-helpers-sample
@@ -19,6 +20,9 @@
   (reduce #(:db-after (d/with %1 %2))
           db
           transactions))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Seattle sample
 
 (let [db (with-all (d/db conn)
            (to-schema-transaction
@@ -37,12 +41,12 @@
                                                                                  :region/nw}}}
              :community/category [ (ext {:db/fulltext true}
                                         :db.type/string) ]
-             
+
              :community/orgtype #{:community.orgtype/community
                                   :community.orgtype/commercial
                                   :community.orgtype/nonprofit
                                   :community.orgtype/personal}
-             
+
              :community/type [ #{:community.type/email-list
                                  :community.type/twitter
                                  :community.type/facebook-page
@@ -104,13 +108,16 @@
          ]
        db))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; MusicBrainz sample
+
 (def mbrainz-schema
   {
    ;; The globally unique MusicBrainz ID for the release
    :release/gid (ext {:db/unique :db.unique/identity
                       :db/index true}
                      :db.type/uuid)
-   
+
    ;; The country where the recording was released
    :release/country {:db/ident :db.type/keyword
                      ;; The name of the country
@@ -124,16 +131,16 @@
                      :label/gid (ext {:db/unique :db.unique/identity
                                       :db/index true}
                                      :db.type/uuid)
-                     
+
                      ;; The name of the record label
                      :label/name (ext {:db/fulltext true
                                        :db/index true}
                                       :db.type/string)
-                     
+
                      ;; The name of the record label for use in alphabetical sorting
                      :label/sortName (ext {:db/index true}
                                           :db.type/string)
-                      
+
                      :label/type #{:label.type/distributor
                                    :label.type/holding
                                    :label.type/production
@@ -144,11 +151,11 @@
 
                      ;; The country where the record label is located
                      :label/country :db.type/ref ; country entity, see above
-                     
+
                      ;; The year the label started business
                      :label/startYear (ext {:db/index true}
                                            :db.type/long)
-                      
+
                      ;; The month the label started business
                      :label/startMonth :db.type/long
 
@@ -178,7 +185,7 @@
 
    ;; The barcode on the release packaging
    :release/barcode :db.type/string
-   
+
    ;; The name of the release
    :release/name (ext {:db/fulltext true
                        :db/index true}
@@ -196,56 +203,56 @@
                                                                    :artist/gid (ext {:db/unique :db.unique/identity
                                                                                      :db/index true}
                                                                                     :db.type/uuid)
-                                                                   
+
                                                                    ;; The artist's name
                                                                    :artist/name (ext {:db/fulltext true
                                                                                       :db/index true}
                                                                                      :db.type/string)
-                                                                   
-                                                                   ;; The artist's name for use in alphabetical sorting, e.g. Beatles, The 
+
+                                                                   ;; The artist's name for use in alphabetical sorting, e.g. Beatles, The
                                                                    :artist/sortName (ext {:db/index true}
                                                                                          :db.type/string)
-                                                                   
+
                                                                    ;; The mbrainz-sample says "The artist's name for use in sorting,
                                                                    ;; e.g. Beatles, The"
                                                                    ;; (https://github.com/Datomic/mbrainz-sample/blob/master/schema.edn#L66)
                                                                    ;; but that's most likely a typo, and it must be an enum.
                                                                    ;; Issue opened: https://github.com/Datomic/mbrainz-sample/issues/3
                                                                    :artist/type #{:artist.type/person :artist.type/group :artist.type/other}
-                                                                   
+
                                                                    :artist/gender #{:artist.gender/male
                                                                                     :artist.gender/female
                                                                                     :artist.gender/other}
-                                                                   
+
                                                                    ;; The artist's country of origin
                                                                    :artist/country :db.type/ref ; country entity, see above
-                                                                   
+
                                                                    ;; The year the artist started actively recording
                                                                    :artist/startYear (ext {:db/index true}
                                                                                           :db.type/long)
-                                                                   
+
                                                                    ;; The month the artist started actively recording
                                                                    :artist/startMonth :db.type/long
-                                                                   
+
                                                                    ;; The day the artist started actively recording
                                                                    :artist/startDay :db.type/long
-                                                                   
+
                                                                    ;; The year the artist stopped actively recording
                                                                    :artist/endYear :db.type/long
-                                                                   
+
                                                                    ;; The month the artist stopped actively recording
                                                                    :artist/endMonth :db.type/long
-                                                                   
+
                                                                    ;; The day the artist stopped actively recording
                                                                    :artist/endDay :db.type/long} ]
-                                                 
+
                                                  ;; The artists who contributed to the track
                                                  :track/artistCredit (ext {:db/fulltext true}
                                                                           :db.type/string)
-                                                 
+
                                                  ;; The position of the track relative to the other tracks on the medium
                                                  :track/position :db.type/long
-                                                 
+
                                                  ;; The track name
                                                  :track/name (ext {:db/fulltext true
                                                                    :db/index true}
@@ -255,10 +262,10 @@
                                                  :track/duration (ext {:db/index true}
                                                                       :db.type/long)
                                                  } ])
-                          
+
                           ;; The format of the medium. An enum with lots of possible values
                           :medium/format :db.type/ref
-                          
+
                           ;; The position of this medium in the release relative to the other media, i.e. disc 1
                           :medium/position :db.type/long
 
@@ -267,7 +274,7 @@
                                             :db.type/string)
                           ;; The total number of tracks on the medium
                           :medium/trackCount :db.type/long} ] )
-   
+
    ;; The type of packaging used in the release
    :release/packaging #{:release.packaging/jewelCase
                         :release.packaging/slimJewelCase
@@ -283,14 +290,14 @@
 
    ;; The month of the release
    :release/month :db.type/long
-   
+
    ;; The day of the release
    :release/day :db.type/long
 
    ;; The string represenation of the artist(s) to be credited on the release
    :release/artistCredit (ext {:db/fulltext true}
                               :db.type/string)
-   
+
    ;; The set of artists contributing to the release
    :release/artists [ :db.type/ref ; artist entity, see above
                      ]
@@ -304,11 +311,11 @@
                               :abstractRelease/gid (ext {:db/unique :db.unique/identity
                                                          :db/index true}
                                                         :db.type/uuid)
-                              
+
                               ;; The name of the abstract release
                               :abstractRelease/name (ext {:db/index true}
                                                          :db.type/string)
-                              
+
                               :abstractRelease/type #{:release.type/album
                                                       :release.type/single
                                                       :release.type/ep
@@ -317,11 +324,11 @@
 
                               ;; The set of artists contributing to the abstract release
                               :abstractRelease/artists [ :db.type/ref ]
-                              
+
                               ;; The string represenation of the artist(s) to be credited on the abstract release
                               :abstractRelease/artistCredit (ext {:db/fulltext true}
                                                                  :db.type/string) }
-   
+
    ;; The status of the release
    :release/status (ext {:db/index true}
                         :db.type/string)
@@ -398,7 +405,7 @@
                          :artist/sortName "Ferré, Léo",
                          :artist/endMonth 7}],
                        :track/artistCredit "Léo Ferré",
-                       :track/position 9,                    
+                       :track/position 9,
                        :track/name "Je te donne ces vers",
                        :track/duration 78133}
                       {:track/artists
@@ -520,7 +527,7 @@
                        :track/position 2,
                        :track/name "Colloque sentimental",
                        :track/duration 215266}
-                      {:track/artists     
+                      {:track/artists
                        [{:artist/name "Léo Ferré",
                          :artist/startDay 24,
                          :artist/startYear 1916,
@@ -611,7 +618,7 @@
                          :artist/startDay 24,
                          :artist/startYear 1916,
                          :artist/gender :artist.gender/male,
-                         :artist/startMonth 8,                      
+                         :artist/startMonth 8,
                          :artist/endDay 14,
                          :artist/gid #uuid "15b1cbac-060a-4136-9e07-4622c52c0f60",
                          :artist/country :country/MC,
@@ -648,7 +655,7 @@
     :release/country :country/GB,
     :release/language :language/eng,
     :release/script :script/Latn,
-    :release/year 2003,   
+    :release/year 2003,
     :release/month 5
     :release/day 1,
     :release/label {:label/gid #uuid "b9a3521b-469f-4b19-8915-561738b86330",
