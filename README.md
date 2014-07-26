@@ -1,6 +1,6 @@
 When populating a Datomic database I found it tedious
- to manually deal with temp IDs to refer entities
- to each other. It is difficult to both write and read.
+to manually deal with temp IDs to refer entities
+to each other. It is difficult to both write and read.
 
 I created a simple function TO-TRANSATION which accepts
 natural Clojure datastructure (nested maps, vectors)
@@ -17,9 +17,157 @@ So TO-SCHEMA-TRANSACTION function helps to generate a schema-defining
 transaction from a template, which resembles real shape of data
 how we see it through the Entitiy API.
 
-The notation is meat to be intuitively understandable, see [`examples`](datomic_helpers_sample.clj).
+Example how we can define schema for the well known
+Seattle sample (distributed with Datomic in
+the _<datomic-root>/samples/seattle/seattle-schema.edn_ and _seattle-data0.edn_):
 
-The precise rules are specified in the [`source code comments`](src/datomic_helpers.clj).
+```clojure
+
+           (to-schema-transaction
+            {:community/name (ext {:db/fulltext true}
+                                  :db.type/string)
+             :community/url :db.type/string
+             :community/neighborhood {:neighborhood/name :db.type/string
+                                      :neighborhood/district {:district/name :db.type/string
+                                                              :district/region #{:region/n
+                                                                                 :region/ne
+                                                                                 :region/e
+                                                                                 :region/se
+                                                                                 :region/s
+                                                                                 :region/sw
+                                                                                 :region/w
+                                                                                 :region/nw}}}
+             :community/category [ (ext {:db/fulltext true}
+                                        :db.type/string) ]
+
+             :community/orgtype #{:community.orgtype/community
+                                  :community.orgtype/commercial
+                                  :community.orgtype/nonprofit
+                                  :community.orgtype/personal}
+
+             :community/type [ #{:community.type/email-list
+                                 :community.type/twitter
+                                 :community.type/facebook-page
+                                 :community.type/blog
+                                 :community.type/website
+                                 :community.type/wiki
+                                 :community.type/myspace
+                                 :community.type/ning} ] })
+'''
+and some data for it:
+```clojure
+           (mapcat to-transaction
+                   [{:community/name "15th Ave Community",
+                     :community/category ["15th avenue residents"]
+                     :community/orgtype :community.orgtype/community
+                     :community/type :community.type/email-list
+                     :community/url "http://groups.yahoo.com/group/15thAve_Community/"
+                     :community/neighborhood {:neighborhood/name "Capitol Hill",
+                                              :neighborhood/district {:district/region :region/e
+                                                                      :district/name "East"}}}
+
+                    {:community/category ["neighborhood association"]
+                     :community/orgtype :community.orgtype/community
+                     :community/type :community.type/email-list
+                     :community/name "Admiral Neighborhood Association"
+                     :community/url "http://groups.yahoo.com/group/AdmiralNeighborhood/"
+                     :community/neighborhood {:neighborhood/name "Admiral (West Seattle)"
+                                              :neighborhood/district {:district/region :region/sw
+                                                                      :district/name "Southwest"}}}
+
+                    {:community/category ["members of the Alki Community Council and residents of the Alki Beach neighborhood"]
+                     :community/orgtype :community.orgtype/community
+                     :community/type :community.type/email-list
+                     :community/name "Alki News"
+                     :community/url "http://groups.yahoo.com/group/alkibeachcommunity/"
+                     :community/neighborhood {:neighborhood/name "Alki"
+                                              :neighborhood/district {:district/name "Southwest"}}}
+
+                    {:community/category ["news" "council meetings"]
+                     :community/orgtype :community.orgtype/community
+                     :community/type :community.type/blog
+                     :community/name "Alki News/Alki Community Council"
+                     :community/url "http://alkinews.wordpress.com/"
+                     :community/neighborhood {:neighborhood/name "Alki"}}
+                    {:district/name "Southwest"}
+
+                    {:community/category ["community council"]
+                     :community/orgtype :community.orgtype/community
+                     :community/type :community.type/website
+                     :community/name "All About Belltown"
+                     :community/url "http://www.belltown.org/"
+                     :community/neighborhood {:neighborhood/name "Belltown"
+                                              :neighborhood/district {:district/region :region/w
+                                                                      :district/name "Downtown"}}}]))]
+
+```
+The full [`sample script`](datomic_helpers_sample.clj) contains the above example,
+and also schema and data for another Datimc sample - [MusicBrainz] (https://github.com/Datomic/mbrainz-sample).
+
+The notation is meat to be intuitively understandable, but here is there precise rules:
+
+(TO-SCHEMA-TRANSACTION TYPE)
+----------------------------
+
+We represent schema of Datomic enities by Cloujure maps.
+Map keys are attribute idents, the key values are attribute types.
+
+The type specification may be either:
+- Normal datomic types: :db.type/string, :db.type/float, etc.
+- Clojure map - means an entity. It translates to :db.type/ref type,
+  and the map is processed recursively to define all its attributes too.
+
+  If your specify that your entity has :db/ident attribute,
+  no attribute definition is generated for it
+  (because Datomic already definition for :db/ident).
+  Thus :db/ident in your entities just serves human readers
+  of your schema.
+
+- Vector means the attibute will have :db.cardinality/many;
+  The attirubte type is specified by the nested vector element
+  (thus only single element vectors make sense)
+- Set means an enum. The attribute is given type :db.type/ref,
+  and every element of the set is used as :db/ident for a
+  new, separate entity.
+- An expression (EXT <extra properties> <typespec>) may be
+  used to annotate attribute type with additional schema properties.
+  For example: :community/name (ext {:db/fulltext true}
+                                    :db.type/string)
+
+ - If several entities share attribute with the same name,
+   you may either repeat the attribute type definition,
+   or just use any symbol in place of attribute type,
+   in this case the attribute will be ignored:
+   ```clojure
+      :some/repeated-attribue 'defined-above
+   ```
+
+If the same entity type is referenced from several places,
+you may either repeat the type definition,
+or just use :db.type/ref in the second place.
+
+If same attribute was repeated with different definitions,
+an exception is thrown.
+
+(TO-TRANSACTION DATA-MAP)
+-------------------------
+
+Processes the DATA-MAP, asigns it a :db/id attribute.
+
+If the map key refers to another map, the reference
+is replaced by :db/id of the child map processed recursively.
+
+If the map key refers to a vector, the vector is processed in
+similar faction - all its map elements are replaced by :db/ids
+assigned to them in recursive processing.
+
+All other values (numbers, strings, dates, etc) are left as is.
+
+In result, we translate a nested Clojure data structure
+into a sequence of Datomic transaction maps,
+which populate database with a set of inter-linked entities.
+
+----
 
 I think the notation may be improved, but the current
 form is enough for me, and helps me significantly.

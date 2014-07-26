@@ -10,26 +10,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; TO-TRANSACTION
 
-;;; Support for more convenient DB population.
-;;; Instead of referencing entities by temp IDs manually,
-;;; we allow natural Clojure nested data structures.
-;;;
-;;; The TO-TRANSACTION function processes each map,
-;;; asigns it a :db/id attribute.
-;;;
-;;; If the map key refers to another map, the reference
-;;; is replaced by :db/id of the child map processed recursively.
-;;;
-;;; If the map key refers to a vector, the vector is processed in
-;;; similar faction - all its map elements are replaced by :db/ids
-;;; assigned to them in recursive processing.
-;;;
-;;; All other values (numbers, strings, dates, etc) are left as is.
-;;;
-;;; In result, we translate a nested Clojure data structure
-;;; into a sequence of Datomic transaction maps,
-;;; which populate database with a set of inter-linked entities.
-
 (defn- translate-value [v]
   ;; Returns a vector of two elements:
   ;; 1. The replacement for V (new :db/id value if V is a map,
@@ -62,49 +42,6 @@
 
 (defn ext [extra-props type]
   (list 'ext type extra-props))
-
-;;; We represent schema of Datomic enities by Cloujure maps,
-;;; and have a little utility which generates Datomic attribute
-;;; specification for every map key.
-;;;
-;;; The schema notation is meant to be intuitively understandable,
-;;; because it resembles actual shape of entities as we see them
-;;; in Clojure via Datomic Entity API.
-;;;
-;;; Here are the precise rules:
-;;;
-;;; Map keys are attribute idents, the key values are attribute types.
-;;;
-;;; The type specification may be either:
-;;; - Normal datomic types: :db.type/string, :db.type/float, etc.
-;;; - Clojure map means an entity. It translates to :db.type/ref type,
-;;;   and the map is processed recursively to define all its attributes too.
-;;;
-;;;   If your specify that your entity has :db/ident attribute, 
-;;;   no attribute definition is generated for it
-;;;   (because Datomic already has definition for it).
-;;;   Thus :db/ident in your entities just serves human readers
-;;;   of your schema.
-;;;
-;;; - Vector means the attibute will have :db.cardinality/many;
-;;;   The attirubte type is specified by the nested vector element
-;;;   (thus only single element vectors make sense)
-;;; - An expression (EXT <extra properties> <typespec>) may be
-;;;   used to annotate attribute type with additional schema properties.
-;;;   For example: :event/category (ext {:db/index true} :db.type/keyword)
-;;; - If several entities share attribute with the same name,
-;;;   you may either repeat the attribute type definition,
-;;;   or just use any symbol in place of attribute type,
-;;;   in this case the attribute will be ignored.
-;;;   For example: :schedule/timing-type 'see-above
-;;;
-;;; If the same entity type is referenced from several places,
-;;; you may either repeat the type definition,
-;;; or just use :db.type/ref in the second place.
-;;;
-;;; If same attribute was repeated with different definitions,
-;;; an exception is thrown.
-
 
 (defn- third [s]
   (second (rest s)))
