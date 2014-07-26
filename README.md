@@ -23,83 +23,82 @@ the _<datomic-root>/samples/seattle/seattle-schema.edn_ and _seattle-data0.edn_)
 
 ```clojure
 
-           (to-schema-transaction
-            {:community/name (ext {:db/fulltext true}
-                                  :db.type/string)
-             :community/url :db.type/string
-             :community/neighborhood {:neighborhood/name :db.type/string
-                                      :neighborhood/district {:district/name :db.type/string
-                                                              :district/region #{:region/n
-                                                                                 :region/ne
-                                                                                 :region/e
-                                                                                 :region/se
-                                                                                 :region/s
-                                                                                 :region/sw
-                                                                                 :region/w
-                                                                                 :region/nw}}}
-             :community/category [ (ext {:db/fulltext true}
-                                        :db.type/string) ]
+(to-schema-transaction
+  {:community/name (ext {:db/fulltext true}
+                        :db.type/string)
+   :community/url :db.type/string
+   :community/neighborhood {:neighborhood/name :db.type/string
+                            :neighborhood/district {:district/name :db.type/string
+                                                    :district/region #{:region/n
+                                                                       :region/ne
+                                                                       :region/e
+                                                                       :region/se
+                                                                       :region/s
+                                                                       :region/sw
+                                                                       :region/w
+                                                                       :region/nw}}}
+   :community/category [ (ext {:db/fulltext true}
+                              :db.type/string) ]
 
-             :community/orgtype #{:community.orgtype/community
-                                  :community.orgtype/commercial
-                                  :community.orgtype/nonprofit
-                                  :community.orgtype/personal}
+   :community/orgtype #{:community.orgtype/community
+                        :community.orgtype/commercial
+                        :community.orgtype/nonprofit
+                        :community.orgtype/personal}
 
-             :community/type [ #{:community.type/email-list
-                                 :community.type/twitter
-                                 :community.type/facebook-page
-                                 :community.type/blog
-                                 :community.type/website
-                                 :community.type/wiki
-                                 :community.type/myspace
-                                 :community.type/ning} ] })
-'''
+   :community/type [ #{:community.type/email-list
+                       :community.type/twitter
+                       :community.type/facebook-page
+                       :community.type/blog
+                       :community.type/website
+                       :community.type/wiki
+                       :community.type/myspace
+                       :community.type/ning} ] })
+```
 and some data for it:
 ```clojure
-           (mapcat to-transaction
-                   [{:community/name "15th Ave Community",
-                     :community/category ["15th avenue residents"]
-                     :community/orgtype :community.orgtype/community
-                     :community/type :community.type/email-list
-                     :community/url "http://groups.yahoo.com/group/15thAve_Community/"
-                     :community/neighborhood {:neighborhood/name "Capitol Hill",
-                                              :neighborhood/district {:district/region :region/e
-                                                                      :district/name "East"}}}
+(mapcat to-transaction
+        [{:community/name "15th Ave Community",
+          :community/category ["15th avenue residents"]
+          :community/orgtype :community.orgtype/community
+          :community/type :community.type/email-list
+          :community/url "http://groups.yahoo.com/group/15thAve_Community/"
+          :community/neighborhood {:neighborhood/name "Capitol Hill",
+                                   :neighborhood/district {:district/region :region/e
+                                                           :district/name "East"}}}
 
-                    {:community/category ["neighborhood association"]
-                     :community/orgtype :community.orgtype/community
-                     :community/type :community.type/email-list
-                     :community/name "Admiral Neighborhood Association"
-                     :community/url "http://groups.yahoo.com/group/AdmiralNeighborhood/"
-                     :community/neighborhood {:neighborhood/name "Admiral (West Seattle)"
-                                              :neighborhood/district {:district/region :region/sw
-                                                                      :district/name "Southwest"}}}
+         {:community/category ["neighborhood association"]
+          :community/orgtype :community.orgtype/community
+          :community/type :community.type/email-list
+          :community/name "Admiral Neighborhood Association"
+          :community/url "http://groups.yahoo.com/group/AdmiralNeighborhood/"
+          :community/neighborhood {:neighborhood/name "Admiral (West Seattle)"
+                                   :neighborhood/district {:district/region :region/sw
+                                                           :district/name "Southwest"}}}
 
-                    {:community/category ["members of the Alki Community Council and residents of the Alki Beach neighborhood"]
-                     :community/orgtype :community.orgtype/community
-                     :community/type :community.type/email-list
-                     :community/name "Alki News"
-                     :community/url "http://groups.yahoo.com/group/alkibeachcommunity/"
-                     :community/neighborhood {:neighborhood/name "Alki"
-                                              :neighborhood/district {:district/name "Southwest"}}}
+         {:community/category ["members of the Alki Community Council and residents of the Alki Beach neighborhood"]
+          :community/orgtype :community.orgtype/community
+          :community/type :community.type/email-list
+          :community/name "Alki News"
+          :community/url "http://groups.yahoo.com/group/alkibeachcommunity/"
+          :community/neighborhood {:neighborhood/name "Alki"
+                                   :neighborhood/district {:district/name "Southwest"}}}
 
-                    {:community/category ["news" "council meetings"]
-                     :community/orgtype :community.orgtype/community
-                     :community/type :community.type/blog
-                     :community/name "Alki News/Alki Community Council"
-                     :community/url "http://alkinews.wordpress.com/"
-                     :community/neighborhood {:neighborhood/name "Alki"}}
-                    {:district/name "Southwest"}
+         {:community/category ["news" "council meetings"]
+          :community/orgtype :community.orgtype/community
+          :community/type :community.type/blog
+          :community/name "Alki News/Alki Community Council"
+          :community/url "http://alkinews.wordpress.com/"
+          :community/neighborhood {:neighborhood/name "Alki"}}
+         {:district/name "Southwest"}
 
-                    {:community/category ["community council"]
-                     :community/orgtype :community.orgtype/community
-                     :community/type :community.type/website
-                     :community/name "All About Belltown"
-                     :community/url "http://www.belltown.org/"
-                     :community/neighborhood {:neighborhood/name "Belltown"
-                                              :neighborhood/district {:district/region :region/w
-                                                                      :district/name "Downtown"}}}]))]
-
+         {:community/category ["community council"]
+          :community/orgtype :community.orgtype/community
+          :community/type :community.type/website
+          :community/name "All About Belltown"
+          :community/url "http://www.belltown.org/"
+          :community/neighborhood {:neighborhood/name "Belltown"
+                                   :neighborhood/district {:district/region :region/w
+                                                           :district/name "Downtown"}}}]))]   
 ```
 The full [`sample script`](datomic_helpers_sample.clj) contains the above example,
 and also schema and data for another Datimc sample - [MusicBrainz] (https://github.com/Datomic/mbrainz-sample).
