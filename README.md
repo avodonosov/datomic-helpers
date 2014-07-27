@@ -121,12 +121,12 @@ The type specification may be either:
   If your specify that your entity has `:db/ident` attribute,
   no attribute definition is generated for it
   (because Datomic already has definition for `:db/ident`).
-  Thus `:db/ident` in your entities just serves human readers
+  Thus `:db/ident` in entity types just serves human readers
   of your schema.
 
-- Vector means the attibute will have `:db.cardinality/many`;
+- Vector means the attibute will have `:db.cardinality/many`.
   The attirubte type is specified by the nested vector element
-  (thus only single element vectors make sense)
+  (thus only single element vectors make sense).
 - Set means an enum. The attribute is given type `:db.type/ref`,
   and every element of the set is used as `:db/ident` for a
   new, separate entity.
@@ -134,8 +134,8 @@ The type specification may be either:
   used to annotate attribute type with additional schema properties.
   For example:
   ```clojure
-   :community/name (ext {:db/fulltext true}
-                        :db.type/string)
+      :community/name (ext {:db/fulltext true}
+                           :db.type/string)
   ```
 - If several entities share attribute with the same name,
   you may either repeat the attribute type definition,
