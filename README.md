@@ -19,7 +19,7 @@ how we see it through the Entitiy API.
 
 Example how we can define schema for the well known
 Seattle sample (distributed with Datomic in
-the _<datomic-root>/samples/seattle/seattle-schema.edn_ and _seattle-data0.edn_):
+the _&lt;datomic-root&gt;/samples/seattle/seattle-schema.edn_ and _seattle-data0.edn_):
 
 ```clojure
 
@@ -100,10 +100,12 @@ and some data for it:
                                    :neighborhood/district {:district/region :region/w
                                                            :district/name "Downtown"}}}]))]   
 ```
-The full [`sample script`](datomic_helpers_sample.clj) contains the above example,
+The complete ['datomic_helpers_sample.clj'](datomic_helpers_sample.clj)
+script demonstrates running the above Seattle sample,
 and also schema and data for another Datimc sample - [MusicBrainz] (https://github.com/Datomic/mbrainz-sample).
 
-The notation is meat to be intuitively understandable, but here is there precise rules:
+The notation is meant to be intuitively understandable,
+and here are the precise rules:
 
 `(to-schema-transaction type)`
 ----------------------------
@@ -112,27 +114,29 @@ We represent schema of Datomic enities by Cloujure maps.
 Map keys are attribute idents, the key values are attribute types.
 
 The type specification may be either:
-- Normal datomic types: :db.type/string, :db.type/float, etc.
-- Clojure map - means an entity. It translates to :db.type/ref type,
+- Normal datomic types: `:db.type/string`, `:db.type/float`, etc.
+- Clojure map - means an entity. It translates to `:db.type/ref` type,
   and the map is processed recursively to define all its attributes too.
 
-  If your specify that your entity has :db/ident attribute,
+  If your specify that your entity has `:db/ident` attribute,
   no attribute definition is generated for it
-  (because Datomic already definition for :db/ident).
-  Thus :db/ident in your entities just serves human readers
+  (because Datomic already definition for `:db/ident`).
+  Thus `:db/ident` in your entities just serves human readers
   of your schema.
 
-- Vector means the attibute will have :db.cardinality/many;
+- Vector means the attibute will have `:db.cardinality/many`;
   The attirubte type is specified by the nested vector element
   (thus only single element vectors make sense)
-- Set means an enum. The attribute is given type :db.type/ref,
+- Set means an enum. The attribute is given type `:db.type/ref`,
   and every element of the set is used as :db/ident for a
   new, separate entity.
 - An expression (EXT <extra properties> <typespec>) may be
   used to annotate attribute type with additional schema properties.
-  For example: :community/name (ext {:db/fulltext true}
-                                    :db.type/string)
-
+  For example:
+  ```clojure
+   :community/name (ext {:db/fulltext true}
+                        :db.type/string)
+  ```
  - If several entities share attribute with the same name,
    you may either repeat the attribute type definition,
    or just use any symbol in place of attribute type,
@@ -143,7 +147,7 @@ The type specification may be either:
 
 If the same entity type is referenced from several places,
 you may either repeat the type definition,
-or just use :db.type/ref in the second place.
+or just use `:db.type/ref` in the second place.
 
 If same attribute was repeated with different definitions,
 an exception is thrown.
@@ -151,20 +155,24 @@ an exception is thrown.
 `(to-transaction data-map)`
 -------------------------
 
-Processes the DATA-MAP, asigns it a :db/id attribute.
+Extends `data-map` with `:db/id` attribute.
 
-If the map key refers to another map, the reference
-is replaced by :db/id of the child map processed recursively.
+If a `data-map` key refers to another map, the reference
+value is replaced by :db/id of the child map processed recursively.
 
-If the map key refers to a vector, the vector is processed in
-similar faction - all its map elements are replaced by :db/ids
+If a key refers to a vector, the vector is processed in
+similar fasion - all its map elements are replaced by :db/ids
 assigned to them in recursive processing.
 
 All other values (numbers, strings, dates, etc) are left as is.
 
-In result, we translate a nested Clojure data structure
-into a sequence of Datomic transaction maps,
-which populate database with a set of inter-linked entities.
+This processing turns every map encountered during
+the recursive processing into a valid Datomic transactoction map.
+
+Returns a sequence of all those transaction maps, which
+may be passed to `datomic.api/transact` to populate
+datebase with the required set of inter-linked entities
+with attributes.
 
 ----
 
