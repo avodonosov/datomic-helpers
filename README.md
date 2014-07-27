@@ -100,7 +100,7 @@ and some data for it:
                                    :neighborhood/district {:district/region :region/w
                                                            :district/name "Downtown"}}}]))]   
 ```
-The complete ['datomic_helpers_sample.clj'](datomic_helpers_sample.clj)
+The complete _[datomic_helpers_sample.clj](datomic_helpers_sample.clj)_
 script demonstrates running the above Seattle sample,
 and also schema and data for another Datimc sample - [MusicBrainz] (https://github.com/Datomic/mbrainz-sample).
 
