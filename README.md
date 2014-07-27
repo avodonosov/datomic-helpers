@@ -161,7 +161,7 @@ If a `data-map` key refers to another map, the reference
 value is replaced by `:db/id` of the child map processed recursively.
 
 If a key refers to a vector, the vector is processed in
-similar fasion - all its map elements are replaced by `:db/ids`
+similar fasion - all its map elements are replaced by `:db/id`'s
 assigned to them in recursive processing.
 
 All other values (numbers, strings, dates, etc) are left as is.
