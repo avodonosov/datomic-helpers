@@ -147,7 +147,7 @@ The type specification may be either:
   ```
 
 - If the same entity type is referenced from several places,
-  you may either repeat entity the type definition,
+  you may either repeat the entity type definition,
   or just use `:db.type/ref` in the second appearence.
 
 If the repeated attribute definitions are different,
