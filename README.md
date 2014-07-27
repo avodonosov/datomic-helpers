@@ -133,6 +133,7 @@ The type specification may be either:
 - An expression `(ext <extra properties> <typespec>)` may be
   used to annotate attribute type with additional schema properties.
   For example:
+
   ```clojure
       :community/name (ext {:db/fulltext true}
                            :db.type/string)
