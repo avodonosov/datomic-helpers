@@ -139,9 +139,9 @@ The type specification may be either:
                            :db.type/string)
   ```
 - If several entities share attribute with the same name,
-  you may either repeat the attribute type definition,
-  or just use any symbol in place of attribute type,
-  in this case the attribute will be ignored:
+  you may either repeat the attribute type,
+  or just use any symbol in place of the attribute type,
+  in which case the attribute appearence will be ignored:
   ```clojure
      :some/repeated-attribue 'defined-above
   ```
