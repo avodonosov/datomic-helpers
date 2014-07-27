@@ -118,7 +118,7 @@ The type specification may be either:
 - Clojure map - means an entity. It translates to `:db.type/ref` type,
   and the map is processed recursively to define all its attributes too.
 
-  If your specify that your entity has `:db/ident` attribute,
+  If you specify that your entity has `:db/ident` attribute,
   no attribute definition is generated for it
   (because Datomic already has definition for `:db/ident`).
   Thus `:db/ident` in entity types just serves human readers
@@ -127,6 +127,11 @@ The type specification may be either:
 - Vector means the attibute will have `:db.cardinality/many`.
   The attirubte type is specified by the nested vector element
   (thus only single element vectors make sense).
+  For example, an attribute stroing multiple strings:
+  
+  ```clojure
+     :community/category [ :db.type/string ]
+  ```
 - Set means an enum. The attribute is given type `:db.type/ref`,
   and every element of the set is used as `:db/ident` for a
   new, separate entity.
@@ -135,8 +140,8 @@ The type specification may be either:
   For example:
 
   ```clojure
-      :community/name (ext {:db/fulltext true}
-                           :db.type/string)
+      :community/category [ (ext {:db/fulltext true}
+                                 :db.type/string) ]
   ```
 - If several entities share attribute with the same name,
   you may either repeat the attribute type,
