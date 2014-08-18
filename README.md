@@ -2,7 +2,7 @@ When populating a Datomic database I found it tedious
 to manually deal with temp IDs to refer entities
 to each other. It is difficult to both write and read.
 
-I created a simple function `TO-TRANSATION` which accepts
+I created a simple function `TO-TRANSACTION` which accepts
 natural Clojure datastructure (nested maps, vectors)
 and generates a Datomic transaction to populate DB with
 these interlinked entities - temp IDs are assigned automatically,
