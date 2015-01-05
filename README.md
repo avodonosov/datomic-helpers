@@ -184,3 +184,24 @@ with attributes.
 
 I think the notation may be improved, but the current
 form is enough for me, and helps me significantly.
+
+# Install
+
+Leiningen
+```clojure
+[datomic-helpers "1.0.0"]
+```
+
+Gradle
+```
+compile "datomic-helpers:datomic-helpers:1.0.0"
+```
+
+Maven
+```
+<dependency>
+  <groupId>datomic-helpers</groupId>
+  <artifactId>datomic-helpers</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
