@@ -3,7 +3,7 @@ to manually deal with temp IDs to refer entities
 to each other. It is difficult to both write and read.
 
 I created a simple function `TO-TRANSACTION` which accepts
-natural Clojure datastructure (nested maps, vectors)
+natural Clojure data structure (nested maps, vectors)
 and generates a Datomic transaction to populate DB with
 these interlinked entities - temp IDs are assigned automatically,
 and references to nested entities (maps) are replaced by their temp IDs.
@@ -15,7 +15,7 @@ improve the schema, difficult to consult it when I write queries.
 
 So `TO-SCHEMA-TRANSACTION` function helps to generate a schema-defining
 transaction from a template, which resembles real shape of data
-how we see it through the Entitiy API.
+how we see it through the Entity API.
 
 Example how we can define schema for the well known
 Seattle sample (distributed with Datomic in
@@ -102,7 +102,7 @@ and some data for it:
 ```
 The complete _[datomic_helpers_sample.clj](datomic_helpers_sample.clj)_
 script demonstrates running the above Seattle sample,
-and also schema and data for another Datimc sample - [MusicBrainz] (https://github.com/Datomic/mbrainz-sample).
+and also schema and data for another Datomic sample - [MusicBrainz] (https://github.com/Datomic/mbrainz-sample).
 
 The notation is meant to be intuitively understandable,
 and here are the precise rules:
@@ -110,11 +110,11 @@ and here are the precise rules:
 `(to-schema-transaction type)`
 ----------------------------
 
-We represent schema of Datomic enities by Cloujure maps.
+We represent schema of Datomic entities by Clojure maps.
 Map keys are attribute idents, the key values are attribute types.
 
 The type specification may be either:
-- Normal datomic types: `:db.type/string`, `:db.type/float`, etc.
+- Normal Datomic types: `:db.type/string`, `:db.type/float`, etc.
 - Clojure map - means an entity. It translates to `:db.type/ref` type,
   and the map is processed recursively to define all its attributes too.
 
@@ -148,12 +148,12 @@ The type specification may be either:
   or just use any symbol in place of the attribute type,
   in which case the attribute appearence will be ignored:
   ```clojure
-     :some/repeated-attribue 'defined-above
+     :some/repeated-attribute 'defined-above
   ```
 
 - If the same entity type is referenced from several places,
   you may either repeat the entity type definition,
-  or just use `:db.type/ref` in the second appearence.
+  or just use `:db.type/ref` in the second appearance.
 
 If the repeated attribute definitions are different,
 an exception is thrown.
@@ -167,17 +167,17 @@ If a `data-map` key refers to another map, the reference
 value is replaced by `:db/id` of the child map processed recursively.
 
 If a key refers to a vector, the vector is processed in
-similar fasion - all its map elements are replaced by `:db/id`'s
+similar fashion - all its map elements are replaced by `:db/id`'s
 assigned to them in recursive processing.
 
 All other values (numbers, strings, dates, etc) are left as is.
 
 This processing turns every map encountered into a valid
-Datomic transactoction map.
+Datomic transaction map.
 
 Returns a sequence of all those transaction maps, which
 may be passed to `datomic.api/transact` to populate
-datebase with the required set of inter-linked entities
+database with the required set of inter-linked entities
 with attributes.
 
 ----
